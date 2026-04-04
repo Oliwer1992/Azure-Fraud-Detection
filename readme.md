@@ -14,19 +14,27 @@ The data used in this project comes from Synthetic Financial Datasets For Fraud 
 > Column descriptions sourced from the official Kaggle dataset page.
 
 ## 📂 Project Architecture
-The project is structured into 3 logical stages
+The project follows a Medallion architecture (Bronze → Silver → Gold) to ensure structured and scalable data processing.
 ### 1️⃣ Phase 1: Cloud Data Engineering
 
-#### 🏗️ Data Ingestion (Bronze Layer)
-Currently, the raw data ingestion pipeline is completed.
-
+#### 🥉 Bronze Layer – Data Ingestion
+Currently, the raw data ingestion pipeline is implemented.
+##### Architecture
 1. **Data Lake:** Stored securely in **Azure Data Lake Storage Gen2** (`raw-data` container).
 2. **Orchestration:** **Azure Data Factory (ADF)** pipeline created to dynamically read the CSV and auto-create the schema.
-3. **Relational Database:** Data loaded into **Azure SQL Database** (Serverless tier for cost optimization).
+3. **Database:** Data loaded into **Azure SQL Database** (Serverless tier for cost optimization).
 
-### Data Ingestion Proof
+##### Data Ingestion Proof
 **1. Raw Data in Azure Data Lake:**
 ![Data Lake](images/01_datalake_raw_data.png)
 
 **2. ADF Pipeline Success:**
 ![ADF Pipeline](images/02_adf_pipeline_success.png)
+
+##### Data Validation (SQL) 
+Initial data profiling was performed after ingestion to ensure data quality and completeness.
+- Total records: 6362620
+- Fraud cases: 8213 (~ 0,13 %)
+- Non-fraud cases: 6354407 (~ 99,87 %)
+##### SQL Validation Script
+File `01_data_profiling.sql`
