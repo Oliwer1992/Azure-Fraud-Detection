@@ -32,9 +32,30 @@ Currently, the raw data ingestion pipeline is implemented.
 ![ADF Pipeline](images/02_adf_pipeline_success.png)
 
 ##### Data Validation (SQL) 
-Initial data profiling was performed after ingestion to ensure data quality and completeness.
+Initial data profiling:
 - Total records: 6362620
 - Fraud cases: 8213 (~ 0,13 %)
 - Non-fraud cases: 6354407 (~ 99,87 %)
 ##### SQL Validation Script
+All data profiling queries are stored in:
 File `01_data_profiling.sql`
+
+File: `sql/01_data_profiling.sql`
+
+This script includes:
+- Row count verification
+- Schema inspection
+- Target variable distribution (class imbalance)
+- Basic data preview
+
+#### 🥈 Silver Layer – Data Transformation & Feature Engineering
+In this stage, the raw data was transformed into a model-ready format using SQL Views. This approach ensures resource optimization (no data duplication) and dynamic updates.
+
+##### Key Transformations:
+1. **Data Filtering:** Reduced the dataset from 6.3M to ~2.77M records by focusing exclusively on `TRANSFER` and `CASH_OUT` transaction types, where the majority of fraud cases occur.
+2. **Feature Engineering:** Created two new analytical columns to capture mathematical discrepancies in account balances:
+    - `errorBalanceOrig`: Calculates the difference between the intended and actual balance of the sender.
+    - `errorBalanceDest`: Calculates the difference between the intended and actual balance of the receiver.
+
+##### SQL Transformation Script
+File `sql/02_feature_engineering.sql`
