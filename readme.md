@@ -86,12 +86,43 @@ To finalize the Gold Layer for machine learning, additional predictive features 
 * **`accountDrained` Flag:** A binary indicator (`1` or `0`) capturing transactions that completely emptied the sender's account (`newbalanceOrig == 0` and `amount > 0`).
 * **`isHighAmount` Flag:** A dynamic binary flag marking transactions that exceed the 95th percentile of transfer amounts, effectively isolating high-risk monetary movements.
 
-### 3️⃣ Phase 3: Advanced Anomaly Detection (In Progress)
-*Currently training predictive machine learning models (Logistic Regression, Isolation Forest, LightGBM) to detect anomalies based on the engineered Gold Layer...*
+### 3️⃣ Phase 3: Advanced Anomaly Detection
+
+This phase focused on identifying the most effective algorithm to handle extreme class imbalance (0.13% fraud) and high data volume (2.7M records).
+
+**1. Model Selection & Benchmarking:**
+* **Logistic Regression:** Served as a baseline for linear separability.
+* **Isolation Forest:** Tested as an unsupervised anomaly detection approach to identify "distant" outliers (proved insufficient for this specific business case).
+* **LightGBM (Final Choice):** Selected for its superior handling of large-scale data, high computational speed, and ability to capture complex non-linear fraud patterns.
+
+**2. Multi-Stage Training Strategy:**
+To optimize computational time and local hardware resources (RAM limits), a three-stage training approach was implemented:
+* **Baseline (100% Data):** Initial training on default parameters to establish performance benchmarks.
+* **Rapid Optimization (10% Sub-sample):** Utilized `RandomizedSearchCV` and `StratifiedKFold` on a balanced 10% subset for efficient hyperparameter exploration without memory overload.
+* **Final Optimization (100% Data):** Executed a second, massive `RandomizedSearchCV` pass on the full 2.7M dataset. The algorithm naturally selected a much deeper architecture (e.g., `num_leaves: 151`, `max_depth: 8`, `class_weight: 'balanced'`) to fully leverage the enormous data volume without overfitting.
+
+
+
 ### 4️⃣ Phase 4: Model Deployment (In Progress)
 *Planning to containerize the solution and build an interactive web interface for fraud analysts...*
-## 📈 Results (In Progress)
+## 📈 Results 
+The final **LightGBM Classifier** achieved exceptional results, proving to be highly reliable for production-grade fraud detection.
 
+![confusion_matrix](images/confusion_matrix.png)
+
+| Metric | Score | Business Impact |
+| :--- | :--- | :--- |
+| **Recall** | **99.70%** | Intercepted **1,638 out of 1,643** frauds. |
+| **Precision** | **99.27%** | Only **12 false alarms** out of 554k transactions. |
+| **F1-Score** | **0.9948** | Perfect balance between detection and friction. |
+| **PR-AUC** | **0.9981** | Exceptional model stability across all thresholds. |
+
+**Performance Analysis:**
+The model demonstrates a near-perfect ability to distinguish between legitimate and fraudulent activities. By prioritizing **Recall**, the system minimizes financial losses by missing only 5 transactions, while the high **Precision** ensures that honest customers face virtually zero friction (only 12 accounts flagged incorrectly).
+
+
+
+![PR-AUC Curve](images/PR-AUC_curve_final_model.png).
 ## 🔍 Key Findings (In Progress)
 
 ## 🚀 How to Run (Local Setup) (In Progress)
