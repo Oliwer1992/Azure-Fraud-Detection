@@ -103,8 +103,20 @@ To optimize computational time and local hardware resources (RAM limits), a thre
 
 
 
-### 4️⃣ Phase 4: Model Deployment (In Progress)
-*Planning to containerize the solution and build an interactive web interface for fraud analysts...*
+### 4️⃣ Phase 4: Model Deployment 
+The application has been successfully containerized and equipped with an interactive web interface, making it fully reproducible and cloud-ready.
+
+* **Containerization (Docker):** Packaged the ML model, Streamlit app, and system dependencies into a standalone Docker container. 
+* **Interactive Web UI (Streamlit):** Developed a user-friendly frontend allowing analysts to input transaction details and receive real-time predictions.
+* **Cloud-Ready Architecture:** Configured `Dockerfile` and `requirements.txt` for seamless deployment to any container hosting service.
+![Streamlit App Screenshot](images/fraud_app.png)
+
+
+
+
+
+
+
 ## 📈 Results 
 The final **LightGBM Classifier** achieved exceptional results, proving to be highly reliable for production-grade fraud detection.
 
@@ -123,6 +135,23 @@ The model demonstrates a near-perfect ability to distinguish between legitimate 
 
 
 ![PR-AUC Curve](images/PR-AUC_curve_final_model.png).
-## 🔍 Key Findings (In Progress)
+## 🔍 Key Findings
+**1. Data & Business Insights (EDA):**
+
+* **Targeted Attacks & Extreme Imbalance:** Fraud represents merely 0.13% of all transactions and occurs exclusively within two transaction types: **CASH_OUT** and **TRANSFER**.
+* **Automated 24/7 Operations:** While legitimate user activity naturally peaks between 9 AM and 8 PM, fraud attempts remain relatively constant around the clock. This behavior strongly suggests the use of automated botnets or coordinated attacks originating from different time zones.
+* **Exploiting System Limits:** The transaction amount distribution revealed that frauds involve significantly higher values than normal transfers. Notably, there is a massive spike in fraud at exactly the **10000000** mark, indicating systematic attempts by fraudsters to drain accounts up to a hardcoded system threshold.
+* **The Accounting:** Engineered features tracking balance discrepancies (**errorBalanceOrig** and **errorBalanceDest**) proved to be near-perfect class separators. Genuine transactions always reconcile perfectly mathematically. In contrast, fraudulent events systematically break accounting logic, generating massive unrecorded balances on both the sender's and receiver's ends.
+
+**2. Model Insights & Performance:**
+
+* **Model Effectiveness:** The final LightGBM model successfully navigated the extreme class imbalance, achieving a **PR-AUC score of 0.9981**, driven by a **Recall of 99.70 %**. This ensures the vast majority of fraudulent attempts are intercepted with high precision.
+* **Key Fraud Indicators:** According to the Feature Importance analysis, the model heavily relied on transaction size (**amount**), initial sender funds (**oldbalanceOrg**), destination account anomalies (**newbalanceDest**), and the frequency of destination account usage (**destTransactionCount**).
+
+By combining these behavioral features with the detected accounting errors, the model effectively identifies "account emptying" patterns and the usage of newly created "mule" accounts.
+
+
+## 📊 Power BI Monitoring Dashboard (In Progress)
+
 
 ## 🚀 How to Run (Local Setup) (In Progress)
