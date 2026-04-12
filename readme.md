@@ -17,6 +17,8 @@ The data used in this project comes from Synthetic Financial Datasets For Fraud 
 ## 🛠️ Tech Stack & Tools
 * **Languages:** Python, SQL
 * **Cloud & Data Engineering:** Azure Data Factory (ADF), Azure Data Lake Storage Gen2, Azure SQL Database
+* **Containerization & Deployment:** Docker, Streamlit
+* **Business Intelligence:** Power BI
 * **Data Manipulation & Analysis:** `pandas`
 * **Data Visualization:** `seaborn`, `matplotlib`
 * **Machine Learning:** `scikit-learn`, `lightgbm`
@@ -33,11 +35,14 @@ Currently, the raw data ingestion pipeline is implemented.
 2. **Orchestration:** **Azure Data Factory (ADF)** pipeline created to dynamically read the CSV and auto-create the schema.
 3. **Database:** Data loaded into **Azure SQL Database** (Serverless tier for cost optimization).
 
-##### Data Ingestion Proof
-**1. Raw Data in Azure Data Lake:**
+**Data Ingestion Proof**  
+
+**1. Raw Data in Azure Data Lake:**  
+
 ![Data Lake](images/01_datalake_raw_data.png)
 
-**2. ADF Pipeline Success:**
+**2. ADF Pipeline Success:**  
+
 ![ADF Pipeline](images/02_adf_pipeline_success.png)
 
 ##### Data Validation (SQL) 
@@ -88,7 +93,7 @@ To finalize the Gold Layer for machine learning, additional predictive features 
 
 ### 3️⃣ Phase 3: Advanced Anomaly Detection
 
-This phase focused on identifying the most effective algorithm to handle extreme class imbalance (0.13% fraud) and high data volume (2.7M records).
+This phase focused on identifying the most effective algorithm to handle extreme class imbalance (0.3% fraud) and high data volume (2.7M records).
 
 **1. Model Selection & Benchmarking:**
 * **Logistic Regression:** Served as a baseline for linear separability.
@@ -151,7 +156,43 @@ The model demonstrates a near-perfect ability to distinguish between legitimate 
 By combining these behavioral features with the detected accounting errors, the model effectively identifies "account emptying" patterns and the usage of newly created "mule" accounts.
 
 
-## 📊 Power BI Monitoring Dashboard (In Progress)
+## 📊 Power BI Security Operations Center (SOC) Dashboard
+
+The final stage of the project is an interactive Power BI dashboard designed for real-time fraud monitoring. It filters out the noise of safe transactions to focus strictly on high-risk sectors, providing actionable insights through six key visualizations:
+
+* **Executive KPIs:** Real-time tracking of high-risk transaction volume (2.77M), total confirmed fraud cases (8,213), and the overall Fraud Rate (0.30%).
+* **Activity vs Fraud Attempts (24h):** A dual-axis chart contrasting the natural circadian rhythm of legitimate transactions (blue bars, peaking midday) against the flat, 24/7 automated activity of fraud bots (red line).
+* **Fraud Distribution by Type:** A donut chart confirming that fraud occurs exclusively within `CASH_OUT` and `TRANSFER` transaction types, split almost exactly 50/50.
+* **Accounting Discrepancy (Average Missing Funds):** Visual proof of the mathematical flaw exploited by attackers. Fraudulent transactions (red bar) generate massive average accounting errors on destination accounts, whereas legitimate transactions (blue bar) perfectly reconcile to zero.
+* **Anomaly Detection (Account Draining Pattern):** A scatter plot mapping transaction amounts against original balances. Fraudulent transactions (red dots) form a distinct visual pattern, proving the "account draining" tactic where attackers transfer the exact total balance.
+* **Top Fraud Attempts (Hitting 10M Limit):** A targeted matrix exposing automated scripts that repeatedly attempt to drain exactly $10,000,000—the system's hardcoded threshold.
+* **Fraud Root Cause Analysis:** An AI-driven decomposition tree breaking down fraud cases by transaction type and hour of the day for quick, interactive drill-down investigations.
+
+![Fraud Detection SOC Dashboard](images/dashboard.png)  
+
+*(Note: The `.pbit` template file is available in the `/reports` folder. It requires a valid Azure access key to populate with live data).*
+
+## 🚀 How to Run the App (Docker)
+The application is fully containerized. To run the interactive Streamlit dashboard locally, follow these steps:
+1. **Clone the repository:**
+```bash
+git clone https://github.com/Oliwer1992/Azure-Fraud-Detection.git  
+cd Azure-Fraud-Detection
+```
+2. **Build the Docker image:**
+```bash   
+docker build -t fraud-detection-app .
+```
+3. **Run the container:**
+```bash  
+docker run -p 8501:8501 fraud-detection-app
+```
+4. **Access the dashboard:**
 
 
-## 🚀 How to Run (Local Setup) (In Progress)
+Open your web browser and navigate to: http://localhost:8501
+
+
+
+
+
