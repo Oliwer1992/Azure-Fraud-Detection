@@ -71,4 +71,4 @@ if st.button("Check transaction"):
     if wynik[0] == 1:
         st.error(f"⚠️ High fraud risk — The transaction is Fraud (Probability: {proba:.0%})")
     else:
-        st.success(f"✅ Low fraud risk — The transaction if not Fraud. (Probability: {proba:.0%})")
+        st.success(f"✅ Low fraud risk — The transaction is not Fraud. (Probability: {proba:.0%})")
