@@ -103,7 +103,7 @@ This phase focused on identifying the most effective algorithm to handle extreme
 **2. Multi-Stage Training Strategy:**
 To optimize computational time and local hardware resources (RAM limits), a three-stage training approach was implemented:
 * **Baseline (100% Data):** Initial training on default parameters to establish performance benchmarks.
-* **Rapid Optimization (10% Sub-sample):** Utilized `RandomizedSearchCV` and `StratifiedKFold` on a balanced 10% subset for efficient hyperparameter exploration without memory overload.
+* **Rapid Optimization (10% Sub-sample):** Utilized `RandomizedSearchCV` and `StratifiedKFold` on a stratified 10% subset for efficient hyperparameter exploration without memory overload.
 * **Final Optimization (100% Data):** Executed a second, massive `RandomizedSearchCV` pass on the full 2.7M dataset. The algorithm naturally selected a much deeper architecture (e.g., `num_leaves: 151`, `max_depth: 8`, `class_weight: 'balanced'`) to fully leverage the enormous data volume without overfitting.
 
 
